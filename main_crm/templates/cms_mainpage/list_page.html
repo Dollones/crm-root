@@ -1,0 +1,68 @@
+{% extends 'cms_mainpage/base.html' %}
+
+{% block title %}
+
+Главная страница
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<form action="">
+    {{ filter.form.as_p }}
+    <input type="submit">
+</form>
+
+<h1 class="text-center mb-3">Записи</h1>
+{% if client_list %}
+<div class="table-responsive-xl">
+<table class="table table-striped table-hover">
+  <thead class="thead-dark">
+  <tr>
+    <th>Название компании</th>
+    <th>Руководитель</th>
+    <th>Дата создания записи</th>
+  </tr>
+</thead>
+{% for client in client_list %}
+
+<tbody>
+  <tr>
+    <td><a href="#">{{ client.company_name }}</a></td>
+    <td>{{ client.fio }}</td>
+    <td>{{ client.published }}</td>
+  </tr>
+</tbody>
+
+
+{% endfor %}
+</table>
+</div>
+
+{% else %}
+<p>Записи отсутствуют.</p>
+{% endif %}
+
+
+{% endblock %}
+
+{% block pagination %}
+{% if is_paginated %}
+<div class="pagination">
+          <span class="page-links">
+              {% if page_obj.has_previous %}
+                  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+              {% endif %}
+              <span class="page-current">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+              </span>
+              {% if page_obj.has_next %}
+                  <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+              {% endif %}
+          </span>
+</div>
+{% endif %}
+{% endblock %}
+

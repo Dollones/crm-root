@@ -9,7 +9,7 @@ from .filters import ClientFilter
 
 class CompanyListView(FilterView):
     queryset = Client.objects.all()
-    template_name = 'cms_mainpage/mainpage.html'
+    template_name = 'cms_mainpage/list_page.html'
     paginate_by = INDEX_PAGINATE_BY
     filterset_class = ClientFilter
 
