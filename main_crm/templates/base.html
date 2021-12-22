@@ -21,6 +21,20 @@
               .material-icons.md-24 { font-size: 24px; }
 
 
+    html, body {
+
+        height: 100%;
+    }
+
+    .wrapper {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main {
+        flex: 1 1 auto;
+    }
 
     </style>
 
@@ -28,17 +42,17 @@
 </head>
 <body>
 
-
+<div class="wrapper">
 {% include 'cms_mainpage/navbar.html' %}
-
+<main class="main">
 {% block content %}
 {% endblock %}
 
 {% block pagination %}
 {% endblock %}
-
+</main>
 {% include 'cms_mainpage/footer.html' %}
-
+</div>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -50,5 +64,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+
 </body>
 </html>

@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect
 from django_filters.views import FilterView
-from django.views.generic import DetailView, ListView, TemplateView, CreateView
+from django.views.generic import DetailView, ListView, TemplateView, CreateView, UpdateView
+from django.urls import reverse_lazy
 
 from .forms import CompanyForm
 from .models import Company
@@ -37,3 +38,13 @@ class CompanyCreateView(CreateView):
         cd['slug'] = slugify(cd['company_name'])
         self.object = Company.objects.create(**cd)
         return HttpResponseRedirect(self.get_success_url())
+
+
+class CompanyUpdate(UpdateView):
+    model = Company
+    template_name_suffix = '_update_form'
+    template_name = 'cms_mainpage/company_update_form.html'
+    fields = ['company_name', 'fio', 'description']
+
+
+

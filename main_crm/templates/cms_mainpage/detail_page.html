@@ -4,10 +4,12 @@
 {% block title %}Создание записи{% endblock %}
 
 {% block content %}
-
+<div class="container">
 <h1 class="display-3">{{ company.company_name }}</h1>
 <p>Руководитель: {{ company.fio }}</p>
 <p>Запись создана: {{ company.published }}</p>
 <p>{{ company.description }}</p>
-
+<p>Редактировано: {{ company.edited }}</p>
+<a href="{% url 'company-update' company.slug %}">Редактировать</a>
+</div>
 {% endblock %}
