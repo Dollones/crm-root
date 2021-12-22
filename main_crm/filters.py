@@ -1,14 +1,14 @@
 import django_filters as filters
 from django.utils.translation import gettext_lazy as _
 
-from main_crm.models import Client
+from main_crm.models import Company
 
 
 class MyOrderingFilter(filters.OrderingFilter):
     descending_fmt = _('%s (Обратно)')
 
 
-class ClientFilter(filters.FilterSet):
+class CompanyFilter(filters.FilterSet):
     sort_by = MyOrderingFilter(
         fields=('company_name', 'published'),
         field_labels={
@@ -18,5 +18,5 @@ class ClientFilter(filters.FilterSet):
     )
 
     class Meta:
-        model = Client
+        model = Company
         fields = ['sort_by']

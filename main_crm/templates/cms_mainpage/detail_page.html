@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Создание записи{% endblock %}
+
+{% block content %}
+
+<h1 class="display-3">{{ company.company_name }}</h1>
+<p>Руководитель: {{ company.fio }}</p>
+<p>Запись создана: {{ company.published }}</p>
+<p>{{ company.description }}</p>
+
+{% endblock %}
