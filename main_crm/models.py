@@ -17,7 +17,7 @@ class Company(models.Model):
         verbose_name_plural = 'Companies'
 
     def __str__(self):
-        return self.fio
+        return self.company_name
 
     def get_absolute_url(self):
         return reverse_lazy('company-detail', kwargs={'company_slug': self.slug})
@@ -30,4 +30,4 @@ class Phone(models.Model):
 
 class Email(models.Model):
     user = models.ForeignKey('Company', on_delete=models.CASCADE)
-    email = models.CharField(max_length=30)
+    email = models.EmailField(max_length=30)

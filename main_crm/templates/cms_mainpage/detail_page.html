@@ -5,11 +5,20 @@
 
 {% block content %}
 <div class="container">
-<h1 class="display-3">{{ company.company_name }}</h1>
-<p>Руководитель: {{ company.fio }}</p>
-<p>Запись создана: {{ company.published }}</p>
-<p>{{ company.description }}</p>
-<p>Редактировано: {{ company.edited }}</p>
-<a href="{% url 'company-update' company.slug %}">Редактировать</a>
+    <h1 class="display-3">{{ company.company_name }}</h1>
+    <p>Руководитель: {{ company.fio }}</p>
+    <p>Запись создана: {{ company.published }}</p>
+    <p>{{ company.description|safe }}</p>
+    <p>Редактировано: {{ company.edited }}</p>
+    <p>Контактные данные: </p>
+    {% for phone in company.phone_set.all %}
+        <p>{{ phone.phone }}</p>
+    {% endfor %}
+
+    {% for email in company.email_set.all %}
+        <p>{{ email.email }}</p>
+    {% endfor %}
+
+    <a href="{% url 'company-update' company.slug %}">Редактировать</a>
 </div>
 {% endblock %}

@@ -12,7 +12,10 @@
 <div class="container mx-5 mt-5">
     <form class="" action="" method="POST">
         {% csrf_token %}
+        {{ form.media }}
         {{ form.as_p }}
+        {{ email_form.as_p }}
+        {{ phone_form.as_p }}
 <!--        <input class="" type="submit" value="Создать">-->
         <button type="submit" class="btn btn-primary mb-2">Создать компанию</button>
     </form>
