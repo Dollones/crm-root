@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.core.validators import MinValueValidator
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.urls import reverse_lazy
 
@@ -31,3 +33,30 @@ class Phone(models.Model):
 class Email(models.Model):
     user = models.ForeignKey('Company', on_delete=models.CASCADE)
     email = models.EmailField(max_length=30)
+
+
+class Project(models.Model):
+    user = models.ForeignKey('Company', on_delete=models.CASCADE)
+    title = models.CharField(max_length=250)
+    description = RichTextUploadingField(blank=True)
+    started_at = models.DateField()
+    finished_at = models.DateField(blank=True, null=True)
+    cost = models.IntegerField(blank=True, null=True, validators=(MinValueValidator(0),))
+
+    class Meta:
+        ordering = ['-started_at']
+        verbose_name = 'Project'
+        verbose_name_plural = 'Projects'
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse_lazy('project-detail', kwargs={'pk': self.id})
+
+    def clean(self):
+        if (
+                self.started_at and self.finished_at
+                and (self.started_at > self.finished_at)
+        ):
+            raise ValidationError({'started_at': 'Started_at can`t be bigger then finished_at'})

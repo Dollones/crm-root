@@ -19,6 +19,7 @@
         <p>{{ email.email }}</p>
     {% endfor %}
 
-    <a href="{% url 'company-update' company.slug %}">Редактировать</a>
+    <p><a href="{% url 'company-update' company.slug %}">Редактировать</a></p>
+    <p><a href="{% url 'company-projects-list' company.slug %}">Проекты</a></p>
 </div>
 {% endblock %}

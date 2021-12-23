@@ -10,7 +10,6 @@
 {% block content %}
 
 
-
 <a class="text-decoration-none" href="{% url 'company-create' %}">Создать компанию</a>
 {% if company_list.exists %}
 <form action="">
@@ -21,27 +20,30 @@
 
 <h1 class="text-center mb-3">Записи</h1>
 <div class="table-responsive-xl">
-<table class="table table-striped table-hover">
-  <thead class="thead-dark">
-  <tr>
-    <th>Название компании</th>
-    <th>Руководитель</th>
-    <th>Дата создания записи</th>
-  </tr>
-</thead>
-{% for company in company_list %}
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>Название компании</th>
+            <th>Руководитель</th>
+            <th>Дата создания записи</th>
+            <th>Проекты компании</th>
+        </tr>
+        </thead>
+        {% for company in company_list %}
 
-<tbody>
-  <tr>
-    <td><a href="{{ company.get_absolute_url }}">{{ company.company_name }}</a></td>
-    <td>{{ company.fio }}</td>
-    <td>{{ company.published }}</td>
-  </tr>
-</tbody>
+        <tbody>
+        <tr>
+            <td><a class="text-decoration-none" href="{{ company.get_absolute_url }}">{{ company.company_name }}</a>
+            </td>
+            <td>{{ company.fio }}</td>
+            <td>{{ company.published }}</td>
+            <td><a class="text-decoration-none" href="{% url 'company-projects-list' company.slug  %}">Проекты</a></td>
+        </tr>
+        </tbody>
 
 
-{% endfor %}
-</table>
+        {% endfor %}
+    </table>
 </div>
 
 {% else %}

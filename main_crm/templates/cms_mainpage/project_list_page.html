@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Список проектов
+{% endblock %}
+
+{% block content %}
+
+
+
+{% for project in object_list %}
+<p><a class="display-4 text-decoration-none" href="{{ project.get_absolute_url }}">{{ project.title }}</a></p>
+<hr>
+{% endfor %}
+<a href="{% url 'project-create' slug %}" class="btn btn-info btn-block" role="button">Создать проект</a>
+{% endblock %}

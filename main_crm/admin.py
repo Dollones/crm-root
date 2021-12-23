@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, Phone, Email
+from .models import Company, Phone, Email, Project
 
 
 @admin.register(Phone)
@@ -9,6 +9,11 @@ class PhoneAdmin(admin.ModelAdmin):
 
 @admin.register(Email)
 class EmailAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
     pass
 
 
@@ -22,7 +27,12 @@ class PhoneStackedInline(admin.StackedInline):
     extra = 0
 
 
+class ProjectStackedInline(admin.StackedInline):
+    model = Project
+    extra = 0
+
+
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('company_name',)}
-    inlines = (PhoneStackedInline, EmailStackedInline)
+    inlines = (PhoneStackedInline, EmailStackedInline, ProjectStackedInline)

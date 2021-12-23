@@ -1,10 +1,10 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
+from django.contrib import messages
 from django_filters.views import FilterView
-from django.views.generic import DetailView, ListView, TemplateView, CreateView, UpdateView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView
 
-from .forms import CompanyForm, PhoneForm, EmailForm
-from .models import Company, Email, Phone
+from .forms import CompanyForm, PhoneForm, EmailForm, ProjectForm
+from .models import Company, Project
 from .const import INDEX_PAGINATE_BY
 from .filters import CompanyFilter
 from .utils import slugify
@@ -124,3 +124,39 @@ class CompanyUpdateView(UpdateView):
 
         return super().get_context_data(**kwargs)
 
+
+class ProjectListView(ListView):
+    context_object_name = 'projects'
+    template_name = 'cms_mainpage/project_list_page.html'
+
+    def get_queryset(self):
+        return Project.objects.filter(user__slug=self.kwargs['slug'])
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context.update(self.kwargs)
+        return context
+
+class ProjectDetailView(DetailView):
+    queryset = Project.objects.all()
+    template_name = 'cms_mainpage/project_detail.html'
+
+
+class ProjectCreateView(CreateView):
+    model = Project
+    queryset = Project.objects.all()
+    template_name = 'cms_mainpage/create_project.html'
+    form_class = ProjectForm
+
+    def form_valid(self, form):
+        self.object = project = form.save(commit=False)
+        project.user = Company.objects.get(slug=self.kwargs['slug'])
+        project.save()
+        messages.success(self.request, 'Проект создан')
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class ProjectUpdateView(UpdateView):
+    queryset = Project.objects.all()
+    template_name = 'cms_mainpage/project_update_form.html'
+    form_class = ProjectForm

@@ -1,13 +1,12 @@
-from django.forms import ModelForm, BaseModelFormSet
+from datetime import datetime
+
+from django.forms import ModelForm
 from django import forms
-from main_crm.models import Company, Phone, Email
+from main_crm.models import Company, Phone, Email, Project
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 
 class CompanyForm(ModelForm):
-
-    company_name = forms.CharField(validators=[lambda x: True])
-
     class Meta:
         model = Company
         exclude = ('slug',)
@@ -26,3 +25,15 @@ class EmailForm(ModelForm):
     class Meta:
         model = Email
         exclude = ('user',)
+
+
+class ProjectForm(ModelForm):
+    started_at = forms.DateField(widget=forms.SelectDateWidget)
+    finished_at = forms.DateField(widget=forms.SelectDateWidget(), required=False)
+
+    class Meta:
+        model = Project
+        exclude = ('user',)
+        widgets = {
+            'description': CKEditorUploadingWidget(),
+        }

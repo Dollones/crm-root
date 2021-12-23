@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Обновление формы проекта
+{% endblock %}
+
+{% block content %}
+
+<div class="container mx-5 mt-5">
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary mb-2">Сохранить изменения</button>
+    </form>
+</div>
+
+
+{% endblock %}

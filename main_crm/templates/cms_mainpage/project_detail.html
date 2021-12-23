@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Проект {{ project.title }} {% endblock %}
+
+{% block content %}
+
+
+
+<div class="container-sm">
+    <p class="display-4">Проект: {{ project.title }}</p>
+    <p>{{ project.description|safe }}</p>
+    <p>Project started at: {{ project.started_at }}</p>
+    <p>Project finished at: {{ project.finished_at }}</p>
+    <p>Project cost: {{ project.cost }}$</p>
+</div>
+
+<a href="{% url 'project-update' project.pk %}" class="btn btn-info" role="button">Редактировать</a>
+
+{% endblock %}
