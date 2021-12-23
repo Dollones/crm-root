@@ -12,6 +12,8 @@
     {% csrf_token %}
     {{ form.media }}
     {{ form.as_p }}
+    {{ email_form.as_p }}
+    {{ phone_form.as_p }}
     <button type="submit" class="btn btn-primary mb-2">Применить</button>
 </form>
 {% endblock %}

@@ -7,11 +7,6 @@ class PhoneAdmin(admin.ModelAdmin):
     pass
 
 
-class PhoneStackedInline(admin.StackedInline):
-    model = Phone
-    extra = 0
-
-
 @admin.register(Email)
 class EmailAdmin(admin.ModelAdmin):
     pass
