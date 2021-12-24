@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.forms import ModelForm
 from django import forms
-from main_crm.models import Company, Phone, Email, Project
+from main_crm.models import Company, Phone, Email, Project, Interaction
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 
@@ -34,6 +34,15 @@ class ProjectForm(ModelForm):
     class Meta:
         model = Project
         exclude = ('user',)
+        widgets = {
+            'description': CKEditorUploadingWidget(),
+        }
+
+
+class InteractionForm(ModelForm):
+    class Meta:
+        model = Interaction
+        fields = ('channel', 'description', 'mark')
         widgets = {
             'description': CKEditorUploadingWidget(),
         }

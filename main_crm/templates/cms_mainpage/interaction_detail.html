@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %} Взаимодействие {% endblock %}
+
+{% block content %}
+
+
+
+<div class="container-sm">
+    <p class="display-4">Проект: {{ interaction.project.title }}</p>
+    <p>Канал обращения: {{ interaction.get_channel_display }}</p>
+    <p>Менеджер: {{ interaction.manager }}</p>
+    <p>Описание: {{ interaction.description|safe }}</p>
+    <p>Оценка: {{ interaction.get_mark_display }}</p>
+    <p>Взаимодействие создано: {{ interaction.created_at }}</p>
+    <p>Последнее обновление: {{ interaction.updated_at }}</p>
+    <p><a href="{% url 'interaction-update' interaction.pk %}" class="btn btn-info" role="button">Редактировать</a></p>
+</div>
+
+
+
+{% endblock %}

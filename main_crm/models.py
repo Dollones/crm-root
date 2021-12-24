@@ -3,6 +3,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.urls import reverse_lazy
+from django.contrib.auth.models import User
 
 
 class Company(models.Model):
@@ -60,3 +61,40 @@ class Project(models.Model):
                 and (self.started_at > self.finished_at)
         ):
             raise ValidationError({'started_at': 'Started_at can`t be bigger then finished_at'})
+
+
+class Interaction(models.Model):
+    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+
+    CHANNELS = (
+        ('r', 'Заявка'),
+        ('l', 'Письмо'),
+        ('w', 'Сайт'),
+        ('i', 'Инициатива компании'),
+    )
+
+    channel = models.CharField(max_length=1, choices=CHANNELS)
+    manager = models.ForeignKey(User, on_delete=models.CASCADE)
+    description = RichTextUploadingField(blank=True)
+
+    MARKS = (
+        ('1', 'Ужасно'),
+        ('2', 'Плохо'),
+        ('3', 'Нормально'),
+        ('4', 'Хорошо'),
+        ('5', 'Отлично'),
+    )
+
+    mark = models.CharField(max_length=1, choices=MARKS)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-updated_at']
+        verbose_name = 'Interaction'
+        verbose_name_plural = 'Interactions'
+
+    def get_absolute_url(self):
+        return reverse_lazy('interaction-detail', kwargs={'pk': self.id})
+

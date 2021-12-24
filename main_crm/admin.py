@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, Phone, Email, Project
+from .models import Company, Phone, Email, Project, Interaction
 
 
 @admin.register(Phone)
@@ -36,3 +36,8 @@ class ProjectStackedInline(admin.StackedInline):
 class CompanyAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('company_name',)}
     inlines = (PhoneStackedInline, EmailStackedInline, ProjectStackedInline)
+
+
+@admin.register(Interaction)
+class InteractionAdmin(admin.ModelAdmin):
+    pass

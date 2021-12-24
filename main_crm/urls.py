@@ -10,4 +10,9 @@ urlpatterns = [
     path('<slug:slug>/projects/create/', views.ProjectCreateView.as_view(), name='project-create'),
     path('projects/<int:pk>/update/', views.ProjectUpdateView.as_view(), name='project-update'),
     path('project/<int:pk>/', views.ProjectDetailView.as_view(), name='project-detail'),
+    path('projects/project-interactions/<int:pk>/', views.InteractionListView.as_view(), name='project-interaction-list'),
+    path('interactions/interaction/<int:pk>/', views.InteractionDetailView.as_view(), name='interaction-detail'),
+    path('<slug:slug>/interactions/', views.CompanyInteractionListView.as_view(), name='company-interactions-list'),
+    path('interaction/<int:pk>/create/', views.InteractionCreateView.as_view(), name='interaction-create'),
+    path('interaction/<int:pk>/update/', views.InteractionUpdateView.as_view(), name='interaction-update'),
 ]

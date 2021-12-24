@@ -5,7 +5,6 @@
 {% block content %}
 
 
-
 <div class="container-sm">
     <p class="display-4">Проект: {{ project.title }}</p>
     <p>{{ project.description|safe }}</p>
@@ -14,6 +13,8 @@
     <p>Project cost: {{ project.cost }}$</p>
 </div>
 
-<a href="{% url 'project-update' project.pk %}" class="btn btn-info" role="button">Редактировать</a>
+<p><a href="{% url 'project-update' project.pk %}" class="btn btn-info" role="button">Редактировать</a></p>
+<p><a href="{% url 'project-interaction-list' project.pk %}" class="btn btn-info" role="button">Список
+    взаимодействий</a></p>
 
 {% endblock %}

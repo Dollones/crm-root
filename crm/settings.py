@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'django_filters',
+
     # Мои приложения
 
     'main_crm.apps.MainCrmConfig',

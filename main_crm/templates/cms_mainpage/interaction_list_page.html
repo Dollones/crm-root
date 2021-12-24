@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Список взаимодействий
+{% endblock %}
+
+{% block content %}
+{% if object_list.exists %}
+<h1 class="display-5 text-center mt-3">Взаимодействия проекта</h1>
+{% for interaction in object_list %}
+<p><a class="display-4 text-decoration-none" href="{% url 'interaction-detail' interaction.pk %}">
+    {{ interaction.description|safe|truncatechars_html:40}}</a></p>
+<hr>
+{% endfor %}
+{% else %}
+<p class="mt-5 font-weight-bold text-center text-muted display-4">Записи отсутствуют.</p>
+{% endif %}
+{% endblock %}

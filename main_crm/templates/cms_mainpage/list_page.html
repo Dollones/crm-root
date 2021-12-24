@@ -27,6 +27,7 @@
             <th>Руководитель</th>
             <th>Дата создания записи</th>
             <th>Проекты компании</th>
+            <th>Взаимодействия</th>
         </tr>
         </thead>
         {% for company in company_list %}
@@ -38,6 +39,11 @@
             <td>{{ company.fio }}</td>
             <td>{{ company.published }}</td>
             <td><a class="text-decoration-none" href="{% url 'company-projects-list' company.slug  %}">Проекты</a></td>
+            <td>
+                <a class="text-decoration-none" href="{% url 'company-interactions-list' company.slug  %}">
+                    Взаимодействия
+                </a>
+            </td>
         </tr>
         </tbody>
 

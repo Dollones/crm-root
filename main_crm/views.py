@@ -1,10 +1,12 @@
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.urls import reverse_lazy
 from django_filters.views import FilterView
-from django.views.generic import DetailView, ListView, CreateView, UpdateView
 
-from .forms import CompanyForm, PhoneForm, EmailForm, ProjectForm
-from .models import Company, Project
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
+from .forms import CompanyForm, PhoneForm, EmailForm, ProjectForm, InteractionForm
+from .models import Company, Project, Interaction
 from .const import INDEX_PAGINATE_BY
 from .filters import CompanyFilter
 from .utils import slugify
@@ -137,13 +139,13 @@ class ProjectListView(ListView):
         context.update(self.kwargs)
         return context
 
+
 class ProjectDetailView(DetailView):
     queryset = Project.objects.all()
     template_name = 'cms_mainpage/project_detail.html'
 
 
 class ProjectCreateView(CreateView):
-    model = Project
     queryset = Project.objects.all()
     template_name = 'cms_mainpage/create_project.html'
     form_class = ProjectForm
@@ -160,3 +162,42 @@ class ProjectUpdateView(UpdateView):
     queryset = Project.objects.all()
     template_name = 'cms_mainpage/project_update_form.html'
     form_class = ProjectForm
+
+
+class InteractionListView(ListView):
+    template_name = 'cms_mainpage/interaction_list_page.html'
+
+    def get_queryset(self):
+        return Interaction.objects.filter(project__id=self.kwargs['pk'])
+
+
+class InteractionDetailView(DetailView):
+    queryset = Interaction.objects.all()
+    template_name = 'cms_mainpage/interaction_detail.html'
+
+
+class CompanyInteractionListView(ListView):
+    template_name = 'cms_mainpage/company_interaction_list_page.html'
+
+    def get_queryset(self):
+        return Interaction.objects.filter(project__user__slug=self.kwargs['slug'])
+
+
+class InteractionCreateView(CreateView):
+    queryset = Interaction.objects.all()
+    template_name = 'cms_mainpage/create_interaction.html'
+    form_class = InteractionForm
+
+    def form_valid(self, form):
+        self.object = interaction = form.save(commit=False)
+        interaction.manager = User.objects.first()
+        interaction.project = Project.objects.get(pk=self.kwargs['pk'])
+        interaction.save()
+        messages.success(self.request, 'Взаимодействие создано')
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class InteractionUpdateView(UpdateView):
+    queryset = Interaction.objects.all()
+    template_name = 'cms_mainpage/interaction_update_form.html'
+    form_class = InteractionForm
