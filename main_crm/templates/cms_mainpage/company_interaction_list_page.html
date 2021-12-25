@@ -7,10 +7,17 @@
 {% block content %}
 {% if object_list.exists %}
 
-    {% for interaction in object_list %}
-    <p><a class="display-4 text-decoration-none" href="{% url 'interaction-detail' interaction.pk %}">
+{% for interaction in object_list %}
+<div class="container m-1 border border-dark">
+
+    <p>Взаимодействие по проекту: {{ interaction.project.title }}</p>
+    <p><a class="h3 text-decoration-none" href="{% url 'interaction-detail' interaction.pk %}">
         {{ interaction.description|safe|truncatechars:60 }}</a></p>
-    <hr>
+    <p>Менеджер: {{ interaction.manager }}</p>
+    <p>Создано: {{ interaction.created_at }}</p>
+    <p>Последнее изменение: {{ interaction.updated_at }}</p>
+
+</div>
 {% endfor %}
 
 {% else %}

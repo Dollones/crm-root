@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, Phone, Email, Project, Interaction
+from .models import Company, Phone, Email, Project, Interaction, Profile
 
 
 @admin.register(Phone)
@@ -40,4 +40,9 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(Interaction)
 class InteractionAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
     pass

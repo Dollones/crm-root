@@ -5,12 +5,27 @@
 {% endblock %}
 
 {% block content %}
+ {% if filter %}
+    <form method="GET" action="">
+        {{ filter.form }}
+        <button type="submit">Фильтровать</button>
+        <a href="{% url 'project-interaction-list' pk %}">Сброс</a>
+    </form>
+    {% endif %}
+
 {% if object_list.exists %}
 <h1 class="display-5 text-center mt-3">Взаимодействия проекта</h1>
-{% for interaction in object_list %}
-<p><a class="h3" href="{% url 'interaction-detail' interaction.pk %}">
-    {{ interaction.description|safe|truncatechars_html:40}}</a></p>
-<hr>
+{% for interaction in filter.qs %}
+    <div class="container m-1 border border-dark">
+
+    <p>Взаимодействие по проекту: {{ interaction.project.title }}</p>
+    <p><a class="h3 text-decoration-none" href="{% url 'interaction-detail' interaction.pk %}">
+        {{ interaction.description|safe|truncatechars:60 }}</a></p>
+    <p>Менеджер: {{ interaction.manager }}</p>
+    <p>Создано: {{ interaction.created_at }}</p>
+    <p>Последнее изменение: {{ interaction.updated_at }}</p>
+
+</div>
 {% endfor %}
 {% else %}
 <p class="mt-5 font-weight-bold text-center text-muted display-4">Записи отсутствуют.</p>
@@ -18,20 +33,3 @@
 <p><a class="btn btn-info" role="button" href="{% url 'interaction-create' pk %}">Добавить</a></p>
 {% endblock %}
 
-{% block pagination %}
-{% if is_paginated %}
-      <div class="pagination">
-          <span class="page-links">
-              {% if page_obj.has_previous %}
-                  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-              {% endif %}
-              <span class="page-current">
-                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-              </span>
-              {% if page_obj.has_next %}
-                  <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-              {% endif %}
-          </span>
-      </div>
-  {% endif %}
-{% endblock %}

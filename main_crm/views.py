@@ -1,13 +1,15 @@
+import copy
+
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django_filters.views import FilterView
 
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
-from .forms import CompanyForm, PhoneForm, EmailForm, ProjectForm, InteractionForm
-from .models import Company, Project, Interaction
+from .forms import CompanyForm, PhoneForm, EmailForm, ProjectForm, InteractionForm, ProfileForm, UserForm
+from .models import Company, Project, Interaction, Profile, User
 from .const import INDEX_PAGINATE_BY
-from .filters import CompanyFilter
+from .filters import CompanyFilter, InteractionFilter
 from .utils import slugify
 
 
@@ -189,6 +191,9 @@ class InteractionListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter'] = InteractionFilter(self.request.GET, queryset=self.get_queryset())
+        sort_by = self.request.GET.get('sort_by', '')
+        sort_by_param = f'&sort_by={sort_by}'
         context.update(self.kwargs)
         return context
 
@@ -237,3 +242,79 @@ class InteractionUpdateView(UpdateView):
     queryset = Interaction.objects.all()
     template_name = 'cms_mainpage/interaction_update_form.html'
     form_class = InteractionForm
+
+
+class AllInterationListView(FilterView):
+    queryset = Interaction.objects.all()
+    template_name = 'cms_mainpage/all_interaction_list.html'
+    filterset_class = InteractionFilter
+    paginate_by = INDEX_PAGINATE_BY
+
+    def get_context_data(self, *args, **kwargs):
+        params_string = ''
+        get_params = copy.copy(self.request.GET)
+        get_params.pop('page', False)
+
+        if get_params:
+
+            get_string_elems = []
+            get_prams_iter = iter(get_params.items())
+
+            key, values = next(get_prams_iter, (None, None))
+
+            while key:
+                [get_string_elems.append(f'&{key}={value}') for value in values]
+                key, values = next(get_prams_iter, (None, None))
+
+            params_string = ''.join(get_string_elems)
+
+        return super().get_context_data(*args, params_string=params_string, **kwargs)
+
+
+class UpdateUserView(UpdateView):
+
+    template_name = 'cms_mainpage/update_profile.html'
+    form_class = UserForm
+    profile_form = None
+    success_url = '/'
+
+    def get_object(self):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        if self.request.method == 'GET':
+            user = self.get_object()
+            profile = user.profile
+            kwargs['profile_form'] = ProfileForm(instance=profile)
+
+        return super().get_context_data(**kwargs)
+
+
+    def form_valid(self, form, profile_form):
+        self.object = form.save()
+
+        profile = profile_form.save(commit=False)
+        profile.user = self.object
+        profile.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+    def form_invalid(self, form, profile_form):
+        return self.render_to_response(
+            self.get_context_data(
+                form=form, profile_form=profile_form,
+            )
+        )
+
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+
+        profile = self.object.profile
+        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
+
+        if form.is_valid() and profile_form.is_valid():
+            return self.form_valid(form, profile_form)
+        else:
+            return self.form_invalid(form, profile_form)

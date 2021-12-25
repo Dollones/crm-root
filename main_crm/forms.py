@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.forms import ModelForm
 from django import forms
-from main_crm.models import Company, Phone, Email, Project, Interaction
+from main_crm.models import Company, Phone, Email, Project, Interaction, Profile, User
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 
@@ -46,3 +46,15 @@ class InteractionForm(ModelForm):
         widgets = {
             'description': CKEditorUploadingWidget(),
         }
+
+
+class ProfileForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('profile_image',)
+
+
+class UserForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')

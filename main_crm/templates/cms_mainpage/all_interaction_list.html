@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Список взаимодействий
+{% endblock %}
+
+{% block content %}
+
+ {% if filter %}
+    <form method="GET" action="">
+        {{ filter.form }}
+        <button type="submit">Фильтровать</button>
+        <a href="{% url 'all-interaction-list' %}">Сброс</a>
+    </form>
+    {% endif %}
+
+{% if object_list.exists %}
+<h1 class="display-5 text-center mt-3">Все взаимодействия</h1>
+{% for interaction in object_list %}
+<div class="container m-1 border border-dark">
+    <p>Компания: {{ interaction.project.user }}</p>
+    <p>Взаимодействие по проекту: {{ interaction.project.title }}</p>
+    <p><a class="h3 text-decoration-none" href="{% url 'interaction-detail' interaction.pk %}">
+        {{ interaction.description|safe|truncatechars:60 }}</a></p>
+    <p>Менеджер: {{ interaction.manager }}</p>
+    <p>Создано: {{ interaction.created_at }}</p>
+    <p>Последнее изменение: {{ interaction.updated_at }}</p>
+</div>
+
+{% endfor %}
+{% endif %}
+
+
+
+{% endblock %}
+
+{% block pagination %}
+
+{% if is_paginated %}
+<div class="pagination">
+          <span class="page-links">
+              {% if page_obj.has_previous %}
+                  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}{{params_string}}">previous</a>
+              {% endif %}
+              <span class="page-current">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+              </span>
+              {% if page_obj.has_next %}
+                  <a href="{{ request.path }}?page={{ page_obj.next_page_number }}{{params_string}}">next</a>
+              {% endif %}
+          </span>
+</div>
+{% endif %}
+
+{% endblock %}
