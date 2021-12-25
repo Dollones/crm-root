@@ -16,33 +16,33 @@
     <link rel="stylesheet" type="text/css" href="{% static 'cms/css/style.css' %}">
 
 
-
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
 
 <div class="wrapper">
-{% include 'cms_mainpage/navbar.html' %}
-<main class="main">
-    {% if messages %}
+    {% include 'cms_mainpage/navbar.html' %}
+    <main class="main">
+        {% if messages %}
         <div class="row justify-content-between">
-        <ul>
-            {% for message in messages %}
-            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                {{ message }}
-            </li>
-            {% endfor %}
-        </ul>
+            <ul>
+                {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+                    {{ message }}
+                </li>
+                {% endfor %}
+            </ul>
         </div>
-    {% endif %}
+        {% endif %}
 
-{% block content %}
-{% endblock %}
 
-{% block pagination %}
-{% endblock %}
-</main>
-{% include 'cms_mainpage/footer.html' %}
+        {% block content %}
+        {% endblock %}
+
+        {% block pagination %}
+        {% endblock %}
+    </main>
+    {% include 'cms_mainpage/footer.html' %}
 </div>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

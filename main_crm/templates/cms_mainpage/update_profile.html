@@ -1,16 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<form method="POST" action="" enctype='multipart/form-data'>
-    {% csrf_token %}
-    {{ form.as_p }}
-    {{ profile_form.as_p }}
-    <button type="submit">Сохранить</button>
-    <a href="">Сброс</a>
-</form>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}
+Редактировать профиль
+{% endblock %}
+
+{% block content %}
+<div class="container m-3">
+    <form method="POST" action="" enctype='multipart/form-data'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        {{ profile_form.as_p }}
+        <button class="btn btn-info mb-2" type="submit">Сохранить</button>
+        <a class="btn btn-warning mb-2" href="">Сброс</a>
+    </form>
+</div>
+{% endblock %}

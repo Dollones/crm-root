@@ -1,5 +1,7 @@
 import copy
 
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import PasswordChangeView, LoginView
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -11,9 +13,11 @@ from .models import Company, Project, Interaction, Profile, User
 from .const import INDEX_PAGINATE_BY
 from .filters import CompanyFilter, InteractionFilter
 from .utils import slugify
+from .permissions import SuperUserRequired
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class CompanyListView(FilterView):
+class CompanyListView(LoginRequiredMixin, FilterView):
     queryset = Company.objects.all()
     template_name = 'cms_mainpage/list_page.html'
     paginate_by = INDEX_PAGINATE_BY
@@ -25,13 +29,13 @@ class CompanyListView(FilterView):
         return super().get_context_data(*args, sort_by_param=sort_by_param, **kwargs)
 
 
-class CompanyDetailView(DetailView):
+class CompanyDetailView(LoginRequiredMixin, DetailView):
     queryset = Company.objects.all()
     template_name = 'cms_mainpage/detail_page.html'
     slug_url_kwarg = 'company_slug'
 
 
-class CompanyCreateView(CreateView):
+class CompanyCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
     queryset = Company.objects.all()
     template_name = 'cms_mainpage/create_company.html'
     form_class = CompanyForm
@@ -76,14 +80,15 @@ class CompanyCreateView(CreateView):
         return super().get_context_data(**kwargs)
 
 
-class CompanyDeleteForm(DeleteView):
+class CompanyDeleteForm(LoginRequiredMixin, SuperUserRequired, DeleteView):
     queryset = Company.objects.all()
     template_name = 'cms_mainpage/company_delete.html'
 
     success_url = reverse_lazy('index')
+    raise_exception = True
 
 
-class CompanyUpdateView(UpdateView):
+class CompanyUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
     queryset = Company.objects.all()
     template_name = 'cms_mainpage/company_update_form.html'
     form_class = CompanyForm
@@ -135,7 +140,7 @@ class CompanyUpdateView(UpdateView):
         return super().get_context_data(**kwargs)
 
 
-class ProjectListView(ListView):
+class ProjectListView(LoginRequiredMixin, ListView):
     context_object_name = 'projects'
     template_name = 'cms_mainpage/project_list_page.html'
 
@@ -148,15 +153,16 @@ class ProjectListView(ListView):
         return context
 
 
-class ProjectDetailView(DetailView):
+class ProjectDetailView(LoginRequiredMixin, SuperUserRequired, DetailView):
     queryset = Project.objects.all()
     template_name = 'cms_mainpage/project_detail.html'
 
 
-class ProjectCreateView(CreateView):
+class ProjectCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
     queryset = Project.objects.all()
     template_name = 'cms_mainpage/create_project.html'
     form_class = ProjectForm
+    raise_exception = True
 
     def form_valid(self, form):
         self.object = project = form.save(commit=False)
@@ -166,9 +172,10 @@ class ProjectCreateView(CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ProjectDeleteForm(DeleteView):
+class ProjectDeleteForm(LoginRequiredMixin, SuperUserRequired, DeleteView):
     queryset = Project.objects.all()
     template_name = 'cms_mainpage/project_delete.html'
+    raise_exception = True
 
     def get_success_url(self):
         slug = self.kwargs['slug']
@@ -176,13 +183,14 @@ class ProjectDeleteForm(DeleteView):
         return success_url
 
 
-class ProjectUpdateView(UpdateView):
+class ProjectUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
     queryset = Project.objects.all()
     template_name = 'cms_mainpage/project_update_form.html'
     form_class = ProjectForm
+    raise_exception = True
 
 
-class InteractionListView(ListView):
+class InteractionListView(LoginRequiredMixin, SuperUserRequired, ListView):
     template_name = 'cms_mainpage/interaction_list_page.html'
     paginate_by = INDEX_PAGINATE_BY
 
@@ -191,29 +199,29 @@ class InteractionListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter'] = InteractionFilter(self.request.GET, queryset=self.get_queryset())
         sort_by = self.request.GET.get('sort_by', '')
         sort_by_param = f'&sort_by={sort_by}'
         context.update(self.kwargs)
         return context
 
 
-class InteractionDetailView(DetailView):
+class InteractionDetailView(LoginRequiredMixin, SuperUserRequired, DetailView):
     queryset = Interaction.objects.all()
     template_name = 'cms_mainpage/interaction_detail.html'
 
 
-class CompanyInteractionListView(ListView):
+class CompanyInteractionListView(LoginRequiredMixin, SuperUserRequired, ListView):
     template_name = 'cms_mainpage/company_interaction_list_page.html'
 
     def get_queryset(self):
         return Interaction.objects.filter(project__user__slug=self.kwargs['slug'])
 
 
-class InteractionCreateView(CreateView):
+class InteractionCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
     queryset = Interaction.objects.all()
     template_name = 'cms_mainpage/create_interaction.html'
     form_class = InteractionForm
+    raise_exception = True
 
     def form_valid(self, form):
         self.object = interaction = form.save(commit=False)
@@ -229,22 +237,24 @@ class InteractionCreateView(CreateView):
         return success_url
 
 
-class InteractionDeleteForm(DeleteView):
+class InteractionDeleteForm(LoginRequiredMixin, SuperUserRequired, DeleteView):
     queryset = Interaction.objects.all()
     template_name = 'cms_mainpage/interaction_delete.html'
+    raise_exception = True
 
     def get_success_url(self):
         success_url = reverse_lazy('project-interaction-list', kwargs={'pk': self.object.project.id})
         return success_url
 
 
-class InteractionUpdateView(UpdateView):
+class InteractionUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
     queryset = Interaction.objects.all()
     template_name = 'cms_mainpage/interaction_update_form.html'
     form_class = InteractionForm
+    raise_exception = True
 
 
-class AllInterationListView(FilterView):
+class AllInteractionListView(LoginRequiredMixin, SuperUserRequired, FilterView):
     queryset = Interaction.objects.all()
     template_name = 'cms_mainpage/all_interaction_list.html'
     filterset_class = InteractionFilter
@@ -271,12 +281,12 @@ class AllInterationListView(FilterView):
         return super().get_context_data(*args, params_string=params_string, **kwargs)
 
 
-class UpdateUserView(UpdateView):
-
+class UpdateUserView(LoginRequiredMixin, UpdateView):
     template_name = 'cms_mainpage/update_profile.html'
     form_class = UserForm
     profile_form = None
-    success_url = '/'
+    success_url = reverse_lazy('manager-profile')
+    raise_exception = True
 
     def get_object(self):
         return self.request.user
@@ -289,7 +299,6 @@ class UpdateUserView(UpdateView):
 
         return super().get_context_data(**kwargs)
 
-
     def form_valid(self, form, profile_form):
         self.object = form.save()
 
@@ -298,14 +307,12 @@ class UpdateUserView(UpdateView):
         profile.save()
         return HttpResponseRedirect(self.get_success_url())
 
-
     def form_invalid(self, form, profile_form):
         return self.render_to_response(
             self.get_context_data(
                 form=form, profile_form=profile_form,
             )
         )
-
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -318,3 +325,33 @@ class UpdateUserView(UpdateView):
             return self.form_valid(form, profile_form)
         else:
             return self.form_invalid(form, profile_form)
+
+
+class UserInteractionLitView(LoginRequiredMixin, DetailView):
+    queryset = User.objects.all()
+    template_name = 'cms_mainpage/manager_profile.html'
+
+    def get_object(self):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['interactions'] = Interaction.objects.filter(manager=self.object)
+        return context
+
+
+class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'cms_mainpage/password_change.html'
+    success_url = reverse_lazy('manager-profile')
+
+    def get_success_url(self):
+        messages.success(self.request, 'Ваш пароль успешно изменён!')
+        return super(UserPasswordChangeView, self).get_success_url()
+
+
+class LoginUser(LoginView):
+    form_class = AuthenticationForm
+    template_name = 'login.html'
+
+    def get_success_url(self):
+        return reverse_lazy('index')

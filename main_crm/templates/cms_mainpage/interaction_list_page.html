@@ -5,13 +5,6 @@
 {% endblock %}
 
 {% block content %}
- {% if filter %}
-    <form method="GET" action="">
-        {{ filter.form }}
-        <button type="submit">Фильтровать</button>
-        <a href="{% url 'project-interaction-list' pk %}">Сброс</a>
-    </form>
-    {% endif %}
 
 {% if object_list.exists %}
 <h1 class="display-5 text-center mt-3">Взаимодействия проекта</h1>

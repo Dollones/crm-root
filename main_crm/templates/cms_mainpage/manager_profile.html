@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Мои записи
+{% endblock %}
+
+{% block content %}
+<div class="container pt-3">
+
+    {% if object.profile.profile_image %}
+    <p><img src="{{ object.profile.profile_image.url }}" alt="Картинка пользователя" height="200"></p>
+    {% else %}
+    <p><img src="{% static 'cms/images/default.png' %}" alt="Картинка пользователя" height="200"></p>
+    {% endif %}
+    <p>Имя пользователя: {{ object.username }}</p>
+    {% if user.is_authenticated and user.is_superuser %}
+    <a class="btn btn-warning mb-2" href="{% url 'profile-update' %}">Обновить данные</a>
+    <a class="btn btn-warning mb-2" href="{% url 'password-change' %}">Сменить пароль</a>
+    <p class="text-center">Компании</p>
+    {% for interaction in interactions %}
+    <p><a href="{% url 'company-detail' interaction.project.user.slug %}">{{ interaction.project.user.company_name }}</a></p>
+    {% endfor %}
+    <p><a class="btn btn-info mb-2" href="{% url 'company-create' %}">Создать компанию</a></p>
+    <p class="text-center">Проекты</p>
+    {% for interaction in interactions %}
+    <p><a href="{% url 'project-detail' interaction.project.pk %}"> {{ interaction.project.title }}</a></p>
+    {% endfor %}
+
+    {% if interactions.exists %}
+    <p class="text-center">Записи</p>
+
+    {% for interaction in interactions %}
+        <p><a href="{% url 'interaction-detail' interaction.pk %}">{{ interaction.description|safe }}</a></p>
+    {% endfor %}
+    {% endif %}
+    {% endif %}
+
+</div>
+{% endblock %}
