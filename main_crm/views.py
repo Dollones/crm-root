@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -73,6 +72,13 @@ class CompanyCreateView(CreateView):
             kwargs['email_form'] = EmailForm()
             kwargs['phone_form'] = PhoneForm()
         return super().get_context_data(**kwargs)
+
+
+class CompanyDeleteForm(DeleteView):
+    queryset = Company.objects.all()
+    template_name = 'cms_mainpage/company_delete.html'
+
+    success_url = reverse_lazy('index')
 
 
 class CompanyUpdateView(UpdateView):
@@ -158,6 +164,16 @@ class ProjectCreateView(CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
+class ProjectDeleteForm(DeleteView):
+    queryset = Project.objects.all()
+    template_name = 'cms_mainpage/project_delete.html'
+
+    def get_success_url(self):
+        slug = self.kwargs['slug']
+        success_url = reverse_lazy('company-projects-list', kwargs={'slug': slug})
+        return success_url
+
+
 class ProjectUpdateView(UpdateView):
     queryset = Project.objects.all()
     template_name = 'cms_mainpage/project_update_form.html'
@@ -166,9 +182,15 @@ class ProjectUpdateView(UpdateView):
 
 class InteractionListView(ListView):
     template_name = 'cms_mainpage/interaction_list_page.html'
+    paginate_by = INDEX_PAGINATE_BY
 
     def get_queryset(self):
         return Interaction.objects.filter(project__id=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.kwargs)
+        return context
 
 
 class InteractionDetailView(DetailView):
@@ -190,11 +212,25 @@ class InteractionCreateView(CreateView):
 
     def form_valid(self, form):
         self.object = interaction = form.save(commit=False)
-        interaction.manager = User.objects.first()
+        interaction.manager = self.request.user
         interaction.project = Project.objects.get(pk=self.kwargs['pk'])
         interaction.save()
         messages.success(self.request, 'Взаимодействие создано')
         return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        success_url = reverse_lazy('project-interaction-list', kwargs={'pk': pk})
+        return success_url
+
+
+class InteractionDeleteForm(DeleteView):
+    queryset = Interaction.objects.all()
+    template_name = 'cms_mainpage/interaction_delete.html'
+
+    def get_success_url(self):
+        success_url = reverse_lazy('project-interaction-list', kwargs={'pk': self.object.project.id})
+        return success_url
 
 
 class InteractionUpdateView(UpdateView):

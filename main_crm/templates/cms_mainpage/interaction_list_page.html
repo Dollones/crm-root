@@ -8,11 +8,30 @@
 {% if object_list.exists %}
 <h1 class="display-5 text-center mt-3">Взаимодействия проекта</h1>
 {% for interaction in object_list %}
-<p><a class="display-4 text-decoration-none" href="{% url 'interaction-detail' interaction.pk %}">
+<p><a class="h3" href="{% url 'interaction-detail' interaction.pk %}">
     {{ interaction.description|safe|truncatechars_html:40}}</a></p>
 <hr>
 {% endfor %}
 {% else %}
 <p class="mt-5 font-weight-bold text-center text-muted display-4">Записи отсутствуют.</p>
 {% endif %}
+<p><a class="btn btn-info" role="button" href="{% url 'interaction-create' pk %}">Добавить</a></p>
+{% endblock %}
+
+{% block pagination %}
+{% if is_paginated %}
+      <div class="pagination">
+          <span class="page-links">
+              {% if page_obj.has_previous %}
+                  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+              {% endif %}
+              <span class="page-current">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+              </span>
+              {% if page_obj.has_next %}
+                  <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+              {% endif %}
+          </span>
+      </div>
+  {% endif %}
 {% endblock %}

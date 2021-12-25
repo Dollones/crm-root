@@ -98,3 +98,5 @@ class Interaction(models.Model):
     def get_absolute_url(self):
         return reverse_lazy('interaction-detail', kwargs={'pk': self.id})
 
+    def __str__(self):
+        return self.description

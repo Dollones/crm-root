@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %} Удаление проекта {% endblock %}
+
+{% block content %}
+<div class="container pt-5">
+    <form method="post">{% csrf_token %}
+        <p class="h3">Вы уверены, что хотите удалить взаимодействие "{{ object|safe|truncatechars_html:7 }}"?</p>
+        {{ form }}
+        <button type="submit" class="btn btn-danger mb-2">Удалить</button>
+    </form>
+</div>
+{% endblock %}
