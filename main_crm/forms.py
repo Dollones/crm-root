@@ -62,6 +62,7 @@ UpdateEmailFormSet = inlineformset_factory(
     can_delete=True
 )
 
+
 class ProjectForm(ModelForm):
     started_at = forms.DateField(widget=forms.SelectDateWidget)
     finished_at = forms.DateField(widget=forms.SelectDateWidget(), required=False)
