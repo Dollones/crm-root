@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Список всех проектов
+{% endblock %}
+
+{% block content %}
+
+<h1 class="display-5 text-center mt-3">Все проекты</h1>
+{% for project in project_list %}
+<div class="container m-1 border border-dark">
+
+    <p>Компания: {{ project.user }}</p>
+    <p>Название проекта: {{ project.title }}</p>
+    <p>Проект начался: {{ project.started_at }}</p>
+    {% if project.finished_at %}
+    <p>Проект закончился: {{ project.finished_at }}</p>
+    {% endif %}
+    {% if project.cost %}
+    <p>Затраты на проект: {{ project.cost }}</p>
+    {% endif %}
+    <p><a href="{% url 'project-detail' project.pk %}" class="btn btn-info" role="button">Вперед</a></p>
+
+</div>
+{% endfor %}
+{% endblock %}

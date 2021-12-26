@@ -8,7 +8,7 @@
 
 {% if object_list.exists %}
 <h1 class="display-5 text-center mt-3">Взаимодействия проекта</h1>
-{% for interaction in filter.qs %}
+{% for interaction in interaction_list %}
     <div class="container m-1 border border-dark">
 
     <p>Взаимодействие по проекту: {{ interaction.project.title }}</p>

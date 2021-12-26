@@ -9,11 +9,11 @@ from django_filters.views import FilterView
 
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 from .forms import CompanyForm, PhoneForm, EmailForm, ProjectForm, InteractionForm, ProfileForm, UserForm
-from .models import Company, Project, Interaction, Profile, User
+from .models import Company, Project, Interaction, User
 from .const import INDEX_PAGINATE_BY
 from .filters import CompanyFilter, InteractionFilter
 from .utils import slugify
-from .permissions import SuperUserRequired
+from .permissions import SuperUserRequired, OwnerRequired
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -153,6 +153,13 @@ class ProjectListView(LoginRequiredMixin, ListView):
         return context
 
 
+class AllProjectsListView(LoginRequiredMixin, ListView):
+    template_name = 'cms_mainpage/all-projects.html'
+
+    def get_queryset(self):
+        return Project.objects.all()
+
+
 class ProjectDetailView(LoginRequiredMixin, SuperUserRequired, DetailView):
     queryset = Project.objects.all()
     template_name = 'cms_mainpage/project_detail.html'
@@ -178,7 +185,8 @@ class ProjectDeleteForm(LoginRequiredMixin, SuperUserRequired, DeleteView):
     raise_exception = True
 
     def get_success_url(self):
-        slug = self.kwargs['slug']
+        # slug = self.kwargs['slug']
+        slug = self.object.user.slug
         success_url = reverse_lazy('company-projects-list', kwargs={'slug': slug})
         return success_url
 
@@ -193,9 +201,10 @@ class ProjectUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
 class InteractionListView(LoginRequiredMixin, SuperUserRequired, ListView):
     template_name = 'cms_mainpage/interaction_list_page.html'
     paginate_by = INDEX_PAGINATE_BY
+    queryset = Interaction.objects.all()
 
     def get_queryset(self):
-        return Interaction.objects.filter(project__id=self.kwargs['pk'])
+        return super().get_queryset().filter(project__id=self.kwargs['pk'])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -237,21 +246,23 @@ class InteractionCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
         return success_url
 
 
-class InteractionDeleteForm(LoginRequiredMixin, SuperUserRequired, DeleteView):
+class InteractionDeleteForm(LoginRequiredMixin, SuperUserRequired, OwnerRequired, DeleteView):
     queryset = Interaction.objects.all()
     template_name = 'cms_mainpage/interaction_delete.html'
     raise_exception = True
+    user_field = 'manager'
 
     def get_success_url(self):
         success_url = reverse_lazy('project-interaction-list', kwargs={'pk': self.object.project.id})
         return success_url
 
 
-class InteractionUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
+class InteractionUpdateView(LoginRequiredMixin, SuperUserRequired, OwnerRequired, UpdateView):
     queryset = Interaction.objects.all()
     template_name = 'cms_mainpage/interaction_update_form.html'
     form_class = InteractionForm
     raise_exception = True
+    user_field = 'manager'
 
 
 class AllInteractionListView(LoginRequiredMixin, SuperUserRequired, FilterView):
