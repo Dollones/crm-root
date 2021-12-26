@@ -9,8 +9,7 @@
 
 {% block content %}
 
-
-<a class="text-decoration-none" href="{% url 'company-create' %}">Создать компанию</a>
+<a class="btn btn-warning mb-2 text-decoration-none" href="{% url 'company-create' %}">Создать компанию</a>
 {% if company_list.exists %}
 <form action="">
     {{ filter.form.as_p }}

@@ -12,28 +12,43 @@
     {% else %}
     <p><img src="{% static 'cms/images/default.png' %}" alt="Картинка пользователя" height="200"></p>
     {% endif %}
+
     <p>Имя пользователя: {{ object.username }}</p>
-    {% if user.is_authenticated and user.is_superuser %}
-    <a class="btn btn-warning mb-2" href="{% url 'profile-update' %}">Обновить данные</a>
     <a class="btn btn-warning mb-2" href="{% url 'password-change' %}">Сменить пароль</a>
-    <p class="text-center">Компании</p>
-    {% for interaction in interactions %}
-    <p><a href="{% url 'company-detail' interaction.project.user.slug %}">{{ interaction.project.user.company_name }}</a></p>
-    {% endfor %}
-    <p><a class="btn btn-info mb-2" href="{% url 'company-create' %}">Создать компанию</a></p>
-    <p class="text-center">Проекты</p>
-    {% for interaction in interactions %}
-    <p><a href="{% url 'project-detail' interaction.project.pk %}"> {{ interaction.project.title }}</a></p>
-    {% endfor %}
+    {% if object.profile %}
+    <a class="btn btn-warning mb-2" href="{% url 'profile-update' %}">Обновить данные</a>
 
-    {% if interactions.exists %}
-    <p class="text-center">Записи</p>
+
+
 
     {% for interaction in interactions %}
-        <p><a href="{% url 'interaction-detail' interaction.pk %}">{{ interaction.description|safe }}</a></p>
+    <p class="h2">Компания:
+        <a href="{% url 'company-detail' interaction.project.user.slug %}">
+            {{ interaction.project.user.company_name }}
+        </a>
+    </p>
+
+    <p>Проекты: </p>
+    <ul class="list-group">
+        {% for interaction in interactions %}
+        <li class="list-group-item list-group-item-action"><a href="{% url 'project-detail' interaction.project.pk %}">
+            {{ interaction.project.title }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <p>Взаимодействия: </p>
+    <ul class="list-group">
+        {% for interaction in interactions %}
+        <li class="list-group-item list-group-item-action">
+            <a href="{% url 'interaction-detail' interaction.pk %}">
+                {{ interaction.description|safe }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
     {% endfor %}
-    {% endif %}
-    {% endif %}
+
 
 </div>
+{% endif %}
 {% endblock %}
