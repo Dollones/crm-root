@@ -4,6 +4,7 @@ from django.forms import ModelForm
 from django import forms
 from main_crm.models import Company, Phone, Email, Project, Interaction, Profile, User
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from django.forms import inlineformset_factory
 
 
 class CompanyForm(ModelForm):
@@ -26,6 +27,40 @@ class EmailForm(ModelForm):
         model = Email
         exclude = ('user',)
 
+
+CreatePhoneFormSet = inlineformset_factory(
+    Company,
+    Phone,
+    fields=('phone',),
+    extra=2,
+    can_delete=False
+)
+
+UpdatePhoneFormSet = inlineformset_factory(
+    Company,
+    Phone,
+    fields=('phone',),
+    extra=2,
+    max_num=2,
+    can_delete=True
+)
+
+CreateEmailFormSet = inlineformset_factory(
+    Company,
+    Email,
+    fields=('email',),
+    extra=2,
+    can_delete=False
+)
+
+UpdateEmailFormSet = inlineformset_factory(
+    Company,
+    Email,
+    fields=('email',),
+    extra=2,
+    max_num=2,
+    can_delete=True
+)
 
 class ProjectForm(ModelForm):
     started_at = forms.DateField(widget=forms.SelectDateWidget)

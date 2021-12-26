@@ -1,15 +1,19 @@
 import copy
 
+from django.contrib.auth import logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import PasswordChangeView, LoginView
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django_filters.views import FilterView
 
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
-from .forms import CompanyForm, PhoneForm, EmailForm, ProjectForm, InteractionForm, ProfileForm, UserForm
-from .models import Company, Project, Interaction, User
+from .forms import CompanyForm, ProjectForm, InteractionForm, ProfileForm, UserForm, \
+    CreateEmailFormSet, CreatePhoneFormSet, UpdateEmailFormSet, UpdatePhoneFormSet
+
+from .models import Company, Project, Interaction, User, Phone, Email
 from .const import INDEX_PAGINATE_BY
 from .filters import CompanyFilter, InteractionFilter
 from .utils import slugify
@@ -45,12 +49,18 @@ class CompanyCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
         cd['slug'] = slugify(cd['company_name'])
         self.object = Company.objects.create(**cd)
 
-        email = email_form.save(commit=False)
-        phone = phone_form.save(commit=False)
-        phone.user = self.object
-        email.user = self.object
-        phone.save()
-        email.save()
+        emails = email_form.save(commit=False)
+        phones = phone_form.save(commit=False)
+
+        for phone in phones:
+            phone.user = self.object
+
+        for email in emails:
+            email.user = self.object
+
+        Phone.objects.bulk_create(phones)
+        Email.objects.bulk_create(emails)
+
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form, email_form, phone_form):
@@ -64,8 +74,8 @@ class CompanyCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
 
     def post(self, request, *args, **kwargs):
         self.object = None
-        email_form = EmailForm(request.POST)
-        phone_form = PhoneForm(request.POST)
+        email_form = CreateEmailFormSet(request.POST)
+        phone_form = CreatePhoneFormSet(request.POST)
         form = self.get_form()
 
         if form.is_valid() and email_form.is_valid() and phone_form.is_valid():
@@ -75,8 +85,8 @@ class CompanyCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
 
     def get_context_data(self, **kwargs):
         if self.request.method == 'GET':
-            kwargs['email_form'] = EmailForm()
-            kwargs['phone_form'] = PhoneForm()
+            kwargs['email_form'] = CreateEmailFormSet()
+            kwargs['phone_form'] = CreatePhoneFormSet()
         return super().get_context_data(**kwargs)
 
 
@@ -92,8 +102,6 @@ class CompanyUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
     queryset = Company.objects.all()
     template_name = 'cms_mainpage/company_update_form.html'
     form_class = CompanyForm
-    email_form = None
-    phone_form = None
 
     def form_valid(self, form, email_form, phone_form):
         company = form.save(commit=False)
@@ -115,14 +123,11 @@ class CompanyUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
         )
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        self.object = company = self.get_object()
         form = self.get_form()
 
-        email = self.object.email_set.first()
-        email_form = EmailForm(request.POST, instance=email)
-
-        phone = self.object.phone_set.first()
-        phone_form = PhoneForm(request.POST, instance=phone)
+        email_form = UpdateEmailFormSet(request.POST, instance=company)
+        phone_form = UpdatePhoneFormSet(request.POST, instance=company)
 
         if form.is_valid() and email_form.is_valid() and phone_form.is_valid():
             return self.form_valid(form, email_form, phone_form)
@@ -132,10 +137,8 @@ class CompanyUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
     def get_context_data(self, **kwargs):
         if self.request.method == 'GET':
             company = self.get_object()
-            email = company.email_set.first()
-            phone = company.phone_set.first()
-            kwargs['email_form'] = EmailForm(instance=email)
-            kwargs['phone_form'] = PhoneForm(instance=phone)
+            kwargs['email_form'] = UpdateEmailFormSet(instance=company)
+            kwargs['phone_form'] = UpdatePhoneFormSet(instance=company)
 
         return super().get_context_data(**kwargs)
 
@@ -366,3 +369,8 @@ class LoginUser(LoginView):
 
     def get_success_url(self):
         return reverse_lazy('index')
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('login')
