@@ -64,7 +64,7 @@ ROOT_URLCONF = 'crm.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'main_crm', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,3 +134,6 @@ MEDIA_URL = '/media/'
 
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = 'main_crm:index'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -6,16 +6,18 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.views.generic.base import TemplateView
 from django_filters.views import FilterView
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 from .forms import CompanyForm, ProjectForm, InteractionForm, ProfileForm, UserForm, \
-    CreateEmailFormSet, CreatePhoneFormSet, UpdateEmailFormSet, UpdatePhoneFormSet
-from .models import Company, Project, Interaction, User, Phone, Email
+    CreateEmailFormSet, CreatePhoneFormSet, UpdateEmailFormSet, UpdatePhoneFormSet, CreateUserForm, ResetPasswordForm
+from .models import Company, Project, Interaction, User, Phone, Email, Profile
 from .const import INDEX_PAGINATE_BY
 from .filters import CompanyFilter, InteractionFilter
 from .utils import slugify
 from .permissions import SuperUserRequired, OwnerRequired
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordResetView
 
 
 class CompanyListView(LoginRequiredMixin, FilterView):
@@ -45,7 +47,6 @@ class CompanyDetailView(LoginRequiredMixin, DetailView):
     """
     queryset = Company.objects.all()
     template_name = 'cms_mainpage/detail_page.html'
-    slug_url_kwarg = 'company_slug'
 
 
 class CompanyCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
@@ -566,8 +567,9 @@ class LoginUser(LoginView):
     """
     Контроллер для вывода страницы авторизации пользователя
     """
+    redirect_authenticated_user = True
     form_class = AuthenticationForm
-    template_name = 'login.html'
+    template_name = 'authentication/login.html'
 
     def get_success_url(self):
         """
@@ -585,3 +587,18 @@ def logout_user(request):
     """
     logout(request)
     return redirect('login')
+
+
+class UserSignUp(CreateView):
+    form_class = CreateUserForm
+    template_name = 'registration/register.html'
+    success_url = reverse_lazy('register-success')
+
+
+class UserSignUpSuccess(TemplateView):
+    template_name = 'registration/registration_success.html'
+
+
+class UserResetPassword(PasswordResetView):
+    form_class = ResetPasswordForm
+    template_name = 'registration/password_reset_form.html'

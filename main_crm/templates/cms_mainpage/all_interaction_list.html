@@ -6,13 +6,15 @@
 
 {% block content %}
 
- {% if filter %}
+{% if filter %}
+<div class="container-fluid mt-4">
     <form method="GET" action="">
         {{ filter.form }}
         <button type="submit">Фильтровать</button>
         <a href="{% url 'all-interaction-list' %}">Сброс</a>
     </form>
-    {% endif %}
+</div>
+{% endif %}
 
 {% if object_list.exists %}
 <h1 class="display-5 text-center mt-3">Все взаимодействия</h1>
@@ -29,7 +31,6 @@
 
 {% endfor %}
 {% endif %}
-
 
 
 {% endblock %}

@@ -15,7 +15,7 @@
         <p><a href="{% url 'project-update' project.pk %}" class="btn btn-info" role="button">Редактировать</a></p>
         <p><a href="{% url 'project-interaction-list' project.pk %}" class="btn btn-info" role="button">Список
             взаимодействий</a></p>
-        <p><a href="{% url 'project-delete' project.user.pk project.pk %}" class="btn btn-danger" role="button">Удалить</a></p>
+        <p><a href="{% url 'project-delete' project.user.slug project.pk %}" class="btn btn-danger" role="button">Удалить</a></p>
     </div>
 
 

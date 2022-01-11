@@ -21,5 +21,6 @@
 
     <p><a href="{% url 'company-update' company.slug %}">Редактировать</a></p>
     <p><a href="{% url 'company-projects-list' company.slug %}">Проекты</a></p>
+    <a href="{% url 'company-delete' company.slug %}" class="btn btn-danger" role="button">Удалить компанию</a>
 </div>
 {% endblock %}

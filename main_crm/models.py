@@ -18,12 +18,12 @@ class Company(models.Model):
         published (date): Дата публикации записи;
         edited (date): Дата последнего изменения;
     """
-    company_name = models.CharField(max_length=150, unique=True)
-    slug = models.SlugField(unique=True, null=True)
-    fio = models.CharField(max_length=150)
-    description = RichTextUploadingField(blank=True)
-    published = models.DateField(auto_now_add=True)
-    edited = models.DateField(auto_now=True)
+    company_name = models.CharField(max_length=150, unique=True, verbose_name='Название компании')
+    slug = models.SlugField(unique=True, null=True, verbose_name='Слаг')
+    fio = models.CharField(max_length=150, verbose_name='Руководитель компании')
+    description = RichTextUploadingField(blank=True, verbose_name='Описание')
+    published = models.DateField(auto_now_add=True, verbose_name='Дата публикации')
+    edited = models.DateField(auto_now=True, verbose_name='Последнее изменение')
 
     class Meta:
         ordering = ['published']
@@ -42,7 +42,7 @@ class Company(models.Model):
         Возвращает url компании с конкретным слагом
         :return:
         """
-        return reverse_lazy('company-detail', kwargs={'company_slug': self.slug})
+        return reverse_lazy('company-detail', kwargs={'slug': self.slug})
 
 
 class Phone(models.Model):
@@ -52,8 +52,8 @@ class Phone(models.Model):
         user(class): Екземпляр класса Company
         phone(str): Номер телефона
     """
-    user = models.ForeignKey('Company', on_delete=models.CASCADE)
-    phone = models.CharField(max_length=30)
+    user = models.ForeignKey('Company', on_delete=models.CASCADE, verbose_name='Компания')
+    phone = models.CharField(max_length=30, verbose_name='Номер телефона')
 
 
 class Email(models.Model):
@@ -63,8 +63,8 @@ class Email(models.Model):
             user(class Company): Екземпляр класса Company
             email(str): Адрес электронной почты
         """
-    user = models.ForeignKey('Company', on_delete=models.CASCADE)
-    email = models.EmailField(max_length=30)
+    user = models.ForeignKey('Company', on_delete=models.CASCADE, verbose_name='Компания')
+    email = models.EmailField(max_length=30, verbose_name='Адрес электронной почты')
 
 
 class Project(models.Model):
@@ -78,12 +78,13 @@ class Project(models.Model):
         finished_at(Date): Дата окончания работы над проектом;
         cost(int): Затраты на проект;
     """
-    user = models.ForeignKey('Company', on_delete=models.CASCADE)
-    title = models.CharField(max_length=250)
-    description = RichTextUploadingField(blank=True)
-    started_at = models.DateField()
-    finished_at = models.DateField(blank=True, null=True)
-    cost = models.IntegerField(blank=True, null=True, validators=(MinValueValidator(0),))
+    user = models.ForeignKey('Company', on_delete=models.CASCADE, verbose_name='Компания')
+    title = models.CharField(max_length=250, verbose_name='Название проекта')
+    description = RichTextUploadingField(blank=True, verbose_name='Описание')
+    started_at = models.DateField(verbose_name='Дата начала проекта')
+    finished_at = models.DateField(blank=True, null=True, verbose_name='Дата завершения проекта')
+    cost = models.IntegerField(blank=True, null=True, validators=(MinValueValidator(0),)
+                               , verbose_name='Затраты на проект')
 
     class Meta:
         ordering = ['-started_at']
@@ -129,16 +130,16 @@ class Interaction(models.Model):
             updated_at(Date): Дата обновления взаимодействия;
 
     """
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    project = models.ForeignKey('Project', on_delete=models.CASCADE, verbose_name='Проект')
 
-    channel = models.CharField(max_length=1, choices=CHANNELS)
-    manager = models.ForeignKey(User, on_delete=models.CASCADE)
-    description = RichTextUploadingField(blank=True)
+    channel = models.CharField(max_length=1, choices=CHANNELS, verbose_name='Канал обращения')
+    manager = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Менеджер')
+    description = RichTextUploadingField(blank=True, verbose_name='Описание')
 
-    mark = models.CharField(max_length=1, choices=MARKS)
+    mark = models.CharField(max_length=1, choices=MARKS, verbose_name='Оценка')
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         ordering = ['-updated_at']
@@ -167,8 +168,8 @@ class Profile(models.Model):
             user(class User): Основа профиля;
             profile_image(img): Картинка профиля;
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_image = models.ImageField()
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    profile_image = models.ImageField(verbose_name='Аватар')
 
     def __str__(self):
         """

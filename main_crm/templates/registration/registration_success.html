@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block addons %}
+{% endblock %}
+{% block title %}
+Успех!
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <p class="text-center h1">Вы успешно зарегестрировались</p>
+    <p class="text-center h1">Перейти на страницу <a href="{% url 'login' %}">авторизации</a></p>
+</div>
+{% endblock %}
