@@ -11,7 +11,7 @@ from django_filters.views import FilterView
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 from .forms import CompanyForm, ProjectForm, InteractionForm, ProfileForm, UserForm, \
     CreateEmailFormSet, CreatePhoneFormSet, UpdateEmailFormSet, UpdatePhoneFormSet, CreateUserForm, ResetPasswordForm
-from .models import Company, Project, Interaction, User, Phone, Email, Profile
+from .models import Company, Project, Interaction, User, Phone, Email
 from .const import INDEX_PAGINATE_BY
 from .filters import CompanyFilter, InteractionFilter
 from .utils import slugify
@@ -521,7 +521,7 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
             return self.form_invalid(form, profile_form)
 
 
-class UserInteractionLitView(LoginRequiredMixin, DetailView):
+class UserInteractionListView(LoginRequiredMixin, DetailView):
     """
     Контроллер для вывода информации о пользователе(профиль пользователя) и всех записей,которые
     он создал(компании,проекты и взаимодействия)

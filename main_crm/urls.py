@@ -3,7 +3,8 @@ from . import views
 from django.contrib.auth import views as dj_views
 
 urlpatterns = [
-    path('mym-profile/', views.UserInteractionLitView.as_view(), name='manager-profile'),
+    path('projects/<int:pk>/delete/', views.ProjectDeleteForm.as_view(), name='project-delete'),
+    path('mym-profile/', views.UserInteractionListView.as_view(), name='manager-profile'),
     path('my-profile/password-change/', views.UserPasswordChangeView.as_view(), name='password-change'),
 
     path('password-reset/', include([
@@ -13,7 +14,9 @@ urlpatterns = [
              name='password_reset_done'),
         re_path(r'^confirm/(?P<uidb64>[-\w]+)/(?P<token>[-\w]+)/$', dj_views.PasswordResetConfirmView.as_view(),
                 name='password_reset_confirm'),
-        path('complete/', dj_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+        path('complete/',
+             dj_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),
+             name='password_reset_complete'),
     ])),
 
     path('register/', include([
@@ -37,13 +40,13 @@ urlpatterns = [
         path('<int:pk>/delete/', views.InteractionDeleteForm.as_view(), name='interaction-delete'),
         path('<int:pk>/update/', views.InteractionUpdateView.as_view(), name='interaction-update'),
     ])),
+
     path('<slug:slug>/', include([
         path('', views.CompanyDetailView.as_view(), name='company-detail'),
         path('update/', views.CompanyUpdateView.as_view(), name='company-update'),
         path('delete/', views.CompanyDeleteForm.as_view(), name='company-delete'),
         path('projects/', views.ProjectListView.as_view(), name='company-projects-list'),
         path('projects/create/', views.ProjectCreateView.as_view(), name='project-create'),
-        path('projects/<int:pk>/delete/', views.ProjectDeleteForm.as_view(), name='project-delete'),
         path('interactions/', views.CompanyInteractionListView.as_view(), name='company-interactions-list'),
     ])),
 ]
