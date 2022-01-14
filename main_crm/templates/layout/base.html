@@ -22,7 +22,7 @@
 <body>
 
 <div class="wrapper">
-    {% include 'cms_mainpage/navbar.html' %}
+    {% include 'layout/navbar.html' %}
     <main class="main">
         {% if messages %}
         <div class="row justify-content-between">
@@ -43,7 +43,7 @@
         {% block pagination %}
         {% endblock %}
     </main>
-    {% include 'cms_mainpage/footer.html' %}
+    {% include 'layout/footer.html' %}
 </div>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
