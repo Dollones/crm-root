@@ -155,5 +155,5 @@ class ResetPasswordForm(PasswordResetForm):
     def clean_username(self):
         username = self.cleaned_data["username"]
         if not User.objects.filter(username=username).exists() or not User.objects.get(username=username).email:
-            raise ValidationError(_('This user does not exist or has not email account.'), code='invalid')
+            raise ValidationError(_('This user does not exist or doesn\'t have email account.'), code='invalid')
         return username

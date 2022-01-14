@@ -672,9 +672,42 @@ class LoginUserTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_superuser(username='GGGGGG', password='qweqweqweqwe')
-        self.login_url = reverse('login')
-        self.redirect_url = reverse('index')
 
     def test_login(self):
-        login = self.client.login(username='GGGGGG', password='qweqweqweqwe')
-        self.assertTrue(login)
+        login_correct = self.client.login(username='GGGGGG', password='qweqweqweqwe')
+        login_wrong = self.client.login(username='GefgrGG', password='qwe42534qweqweqwe')
+        self.assertTrue(login_correct)
+        self.assertFalse(login_wrong)
+
+
+class LogoutUserTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_superuser(username='GGGGGG', password='qweqweqweqwe')
+        self.login_url = reverse('index')
+
+    def test_logout(self):
+        self.client.login(username='GGGGGG', password='qweqweqweqwe')
+        self.client.logout()
+        response = self.client.get(self.login_url)
+        self.assertEquals(response.status_code, 302)
+
+
+class UserSignUpTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.register_url = reverse('register')
+        self.redirect_url = reverse('register-success')
+
+    def test_user_sign_up_POST_method(self):
+        response = self.client.post(self.register_url, {
+            'username': 'user1',
+            'password1': '32ttyuewq235A_',
+            'password2': '32ttyuewq235A_',
+        })
+
+        self.assertEquals(response.status_code, 302)
+        self.assertRedirects(response, self.redirect_url)
+        self.assertEquals(User.objects.all().count(), 1)
