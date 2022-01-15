@@ -19,6 +19,23 @@ from .permissions import SuperUserRequired, OwnerRequired
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordResetView
 
+r"""
+
+                |---------------------------------------------------------|
+                |Импортированные классы для анотаций методов контроллеров |
+                |---------------------------------------------------------|
+                
+                                             ||
+                                             ||
+                                            _||_
+                                            \  /
+                                             \/
+                                     
+"""
+from django.core.handlers.wsgi import WSGIRequest
+from django.db.models import QuerySet
+from django.http import HttpResponse
+
 
 class CompanyListView(LoginRequiredMixin, FilterView):
     """
@@ -29,7 +46,7 @@ class CompanyListView(LoginRequiredMixin, FilterView):
     paginate_by = INDEX_PAGINATE_BY
     filterset_class = CompanyFilter
 
-    def get_context_data(self, *args, **kwargs):
+    def get_context_data(self, *args, **kwargs) -> dict:
         """
         Перопределенный метод для совместимости фильтров и пагинации
         :param args:
@@ -57,7 +74,7 @@ class CompanyCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
     template_name = 'cms_mainpage/create_company.html'
     form_class = CompanyForm
 
-    def form_valid(self, form, email_form, phone_form):
+    def form_valid(self, form, email_form, phone_form) -> HttpResponseRedirect:
         """
         Переопределенный метод для проверки форм на валидность
         :param form:
@@ -83,7 +100,7 @@ class CompanyCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
-    def form_invalid(self, form, email_form, phone_form):
+    def form_invalid(self, form, email_form, phone_form) -> HttpResponse:
         return self.render_to_response(
             self.get_context_data(
                 form=form,
@@ -110,7 +127,7 @@ class CompanyCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
         else:
             return self.form_invalid(form, email_form, phone_form)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict:
         """
         Метод для передачи форм CreateEmailFormSet и CreatePhoneFormSet в контекст шаблона
         :param kwargs:
@@ -141,7 +158,7 @@ class CompanyUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
     template_name = 'cms_mainpage/company_update_form.html'
     form_class = CompanyForm
 
-    def form_valid(self, form, email_form, phone_form):
+    def form_valid(self, form, email_form, phone_form) -> HttpResponseRedirect:
         """
         Переопределенный метод,который проверяет формы на валидность
         :param form:
@@ -158,7 +175,7 @@ class CompanyUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
         phone_form.save()
         return HttpResponseRedirect(self.get_success_url())
 
-    def form_invalid(self, form, email_form, phone_form):
+    def form_invalid(self, form, email_form, phone_form) -> HttpResponse:
         """
         Переопределенный метод,который возвращает данные пользователя,если они не прошли валидность
         :param form:
@@ -193,7 +210,7 @@ class CompanyUpdateView(LoginRequiredMixin, SuperUserRequired, UpdateView):
         else:
             return self.form_invalid(form, email_form, phone_form)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict:
         """
         Метод для добавления в контекс шаблона форм UpdateEmailFormSet и UpdatePhoneFormSet со старыми данными
         :param kwargs:
@@ -214,14 +231,14 @@ class ProjectListView(LoginRequiredMixin, ListView):
     context_object_name = 'projects'
     template_name = 'cms_mainpage/project_list_page.html'
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Project]:
         """
         Метод для возврата списка проектов конкретной компании
         :return:
         """
         return Project.objects.filter(user__slug=self.kwargs['slug'])
 
-    def get_context_data(self, *args, **kwargs):
+    def get_context_data(self, *args, **kwargs) -> dict:
         """
         Метод для добавления в контекст шаблона данных с ссылки
         :param args:
@@ -239,7 +256,7 @@ class AllProjectsListView(LoginRequiredMixin, ListView):
     """
     template_name = 'cms_mainpage/all-projects.html'
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Project]:
         """
         Метод для возврата списка всех проектов
         :return:
@@ -264,7 +281,7 @@ class ProjectCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
     form_class = ProjectForm
     raise_exception = True
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponseRedirect:
         """
         Метод для проверки формы на валидность
         :param form:
@@ -313,14 +330,14 @@ class InteractionListView(LoginRequiredMixin, SuperUserRequired, ListView):
     paginate_by = INDEX_PAGINATE_BY
     queryset = Interaction.objects.all()
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Interaction]:
         """
         Контроллер,который возвращает список всех взаимодействий конкретного проекта
         :return:
         """
         return super().get_queryset().filter(project__id=self.kwargs['pk'])
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict:
         """
         Метод для передачи информации с ссылки в контекст шаблона
         :param kwargs:
@@ -345,7 +362,7 @@ class CompanyInteractionListView(LoginRequiredMixin, SuperUserRequired, ListView
     """
     template_name = 'cms_mainpage/company_interaction_list_page.html'
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         """
         Метод,который возвращает отфильтрованный  список взаимодействий по слагу компании в ссылке
         :return:
@@ -362,7 +379,7 @@ class InteractionCreateView(LoginRequiredMixin, SuperUserRequired, CreateView):
     form_class = InteractionForm
     raise_exception = True
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponseRedirect:
         """
         Метод для проверки формы на валидность
         :param form:
@@ -423,7 +440,7 @@ class AllInteractionListView(LoginRequiredMixin, SuperUserRequired, FilterView):
     filterset_class = InteractionFilter
     paginate_by = INDEX_PAGINATE_BY
 
-    def get_context_data(self, *args, **kwargs):
+    def get_context_data(self, *args, **kwargs) -> dict:
         """
         Метод для учета правильной работы фильтров и пагинации
         :param args:
@@ -460,14 +477,14 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('manager-profile')
     raise_exception = True
 
-    def get_object(self):
+    def get_object(self) -> User:
         """
         Метод для получения объекта пользователя
         :return:
         """
         return self.request.user
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict:
         """
         Метод для передачи формы обновления пользователя в контекст шаблона
         :param kwargs:
@@ -480,7 +497,7 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
 
         return super().get_context_data(**kwargs)
 
-    def form_valid(self, form, profile_form):
+    def form_valid(self, form, profile_form) -> HttpResponseRedirect:
         """
         Метод для проверки формы на валидность
         :param form:
@@ -494,7 +511,7 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
         profile.save()
         return HttpResponseRedirect(self.get_success_url())
 
-    def form_invalid(self, form, profile_form):
+    def form_invalid(self, form, profile_form) -> HttpResponse:
         return self.render_to_response(
             self.get_context_data(
                 form=form, profile_form=profile_form,
@@ -529,14 +546,14 @@ class UserInteractionListView(LoginRequiredMixin, DetailView):
     queryset = User.objects.all()
     template_name = 'cms_mainpage/manager_profile.html'
 
-    def get_object(self):
+    def get_object(self) -> User:
         """
         Метод для получения объекта пользователя
         :return:
         """
         return self.request.user
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict:
         """
         Метод для передачи списка взаимодействий,которые создал пользователь
         :param kwargs:
@@ -560,7 +577,7 @@ class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
         :return:
         """
         messages.success(self.request, 'Ваш пароль успешно изменён!')
-        return super(UserPasswordChangeView, self).get_success_url()
+        return super().get_success_url()
 
 
 class LoginUser(LoginView):
@@ -579,7 +596,7 @@ class LoginUser(LoginView):
         return reverse_lazy('index')
 
 
-def logout_user(request):
+def logout_user(request: WSGIRequest) -> HttpResponseRedirect:
     """
     Функция-контроллер для выхода учетной записи пользователя с сайта
     :param request:
@@ -594,7 +611,12 @@ class UserSignUp(CreateView):
     template_name = 'registration/register.html'
     success_url = reverse_lazy('register-success')
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponseRedirect:
+        """
+        Переопределенный метод для занесения записей User и Pofile в базу данных
+        :param form:
+        :return:
+        """
         self.object = form.save()
         profile = Profile.objects.create(user=self.object)
         profile.save()
