@@ -15,12 +15,12 @@
 
     <p>Имя пользователя: {{ object.username }}</p>
     <a class="btn btn-warning mb-2" href="{% url 'password-change' %}">Сменить пароль</a>
-    {% if object.profile %}
+
     <a class="btn btn-warning mb-2" href="{% url 'profile-update' %}">Обновить данные</a>
 
 
 
-
+    {% if object.is_superuser %}
     {% for interaction in interactions %}
     <p class="h2">Компания:
         <a href="{% url 'company-detail' interaction.project.user.slug %}">

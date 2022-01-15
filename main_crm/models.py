@@ -169,7 +169,7 @@ class Profile(models.Model):
             profile_image(img): Картинка профиля;
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
-    profile_image = models.ImageField(verbose_name='Аватар')
+    profile_image = models.ImageField(verbose_name='Аватар', blank=True, null=True)
 
     def __str__(self):
         """

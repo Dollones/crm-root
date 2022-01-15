@@ -11,7 +11,7 @@ from django_filters.views import FilterView
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 from .forms import CompanyForm, ProjectForm, InteractionForm, ProfileForm, UserForm, \
     CreateEmailFormSet, CreatePhoneFormSet, UpdateEmailFormSet, UpdatePhoneFormSet, CreateUserForm, ResetPasswordForm
-from .models import Company, Project, Interaction, User, Phone, Email
+from .models import Company, Project, Interaction, User, Phone, Email, Profile
 from .const import INDEX_PAGINATE_BY
 from .filters import CompanyFilter, InteractionFilter
 from .utils import slugify
@@ -593,6 +593,12 @@ class UserSignUp(CreateView):
     form_class = CreateUserForm
     template_name = 'registration/register.html'
     success_url = reverse_lazy('register-success')
+
+    def form_valid(self, form):
+        self.object = form.save()
+        profile = Profile.objects.create(user=self.object)
+        profile.save()
+        return super().form_valid(form)
 
 
 class UserSignUpSuccess(TemplateView):
